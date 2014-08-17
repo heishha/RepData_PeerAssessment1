@@ -71,7 +71,7 @@ print( xt, include.rownames = FALSE, type="html" )
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 16:04:08 2014 -->
+<!-- Sun Aug 17 16:22:05 2014 -->
 <TABLE border=1>
 <TR> <TH> Mean </TH> <TH> Median </TH>  </TR>
   <TR> <TD align="right"> 10766.19 </TD> <TD align="right"> 10765 </TD> </TR>
@@ -169,7 +169,7 @@ print( xt, include.rownames = FALSE, type="html" )
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 16:04:09 2014 -->
+<!-- Sun Aug 17 16:22:06 2014 -->
 <TABLE border=1>
 <TR> <TH> Mean </TH> <TH> Median </TH>  </TR>
   <TR> <TD align="right"> 10766.19 </TD> <TD align="right"> 10766.19 </TD> </TR>
@@ -209,13 +209,7 @@ dailySummary <- ddply( imputedActivity, .(intervalMinutes, weekpart)
                        , summarize, mean = mean(steps) )
 
 library(ggplot2)
-qplot( intervalMinutes, mean, data = dailySummary, facets = weekpart ~.
-     , geom = "line" )
-```
-
-```
-## geom_path: Each group consist of only one observation. Do you need to adjust the group aesthetic?
-## geom_path: Each group consist of only one observation. Do you need to adjust the group aesthetic?
+qplot( intervalMinutes, mean, data = dailySummary, facets = weekpart ~. )
 ```
 
 ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
