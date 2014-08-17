@@ -170,10 +170,12 @@ imputedActivity$intervalMinutes <- activity$intervalMinutes
 library(plyr)
 dailySummary <- ddply( imputedActivity, .(intervalMinutes, weekpart)
                        , summarize, mean = mean(steps) )
+dailySummary$intervalMinutes <- as.numeric( dailySummary$intervalMinutes )
 
 library(ggplot2)
-qplot( intervalMinutes, mean, data = dailySummary, facets = weekpart ~. )
-library(lattice)
-xyplot( mean ~ intervalMinutes | weekpart, data = dailySummary, type = "l"
-        , layout = c(1,2) )
+ggplot( dailySummary, aes( intervalMinutes, mean ) ) +
+  geom_path( aes(group=weekpart) ) + facet_grid( weekpart ~. )
+##library(lattice)
+##xyplot( mean ~ intervalMinutes | weekpart, data = dailySummary, type = "l"
+##        , layout = c(1,2) )
 ```

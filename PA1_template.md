@@ -27,7 +27,7 @@ dataFilename <- paste0( dataDir, "/activity.csv" )
 activity <- read.csv( dataFilename )
 ```
 
-This report is based on the raw data downloaded from https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip at time 2014-08-17.12:14
+This report is based on the raw data downloaded from https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip at time 2014-08-17.16:47
 .
 
 ### Data summary
@@ -71,7 +71,7 @@ print( xt, include.rownames = FALSE, type="html" )
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 16:28:30 2014 -->
+<!-- Sun Aug 17 16:47:43 2014 -->
 <TABLE border=1>
 <TR> <TH> Mean </TH> <TH> Median </TH>  </TR>
   <TR> <TD align="right"> 10766.19 </TD> <TD align="right"> 10765 </TD> </TR>
@@ -169,7 +169,7 @@ print( xt, include.rownames = FALSE, type="html" )
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 16:28:31 2014 -->
+<!-- Sun Aug 17 16:47:44 2014 -->
 <TABLE border=1>
 <TR> <TH> Mean </TH> <TH> Median </TH>  </TR>
   <TR> <TD align="right"> 10766.19 </TD> <TD align="right"> 10766.19 </TD> </TR>
@@ -207,17 +207,17 @@ imputedActivity$intervalMinutes <- activity$intervalMinutes
 library(plyr)
 dailySummary <- ddply( imputedActivity, .(intervalMinutes, weekpart)
                        , summarize, mean = mean(steps) )
+dailySummary$intervalMinutes <- as.numeric( dailySummary$intervalMinutes )
 
 library(ggplot2)
-qplot( intervalMinutes, mean, data = dailySummary, facets = weekpart ~. )
+ggplot( dailySummary, aes( intervalMinutes, mean ) ) +
+  geom_path( aes(group=weekpart) ) + facet_grid( weekpart ~. )
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-141.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
 
 ```r
-library(lattice)
-xyplot( mean ~ intervalMinutes | weekpart, data = dailySummary, type = "l"
-        , layout = c(1,2) )
+##library(lattice)
+##xyplot( mean ~ intervalMinutes | weekpart, data = dailySummary, type = "l"
+##        , layout = c(1,2) )
 ```
-
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-142.png) 
