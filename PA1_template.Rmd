@@ -6,7 +6,7 @@ Packages and sources required
 * accompanying "lib.R"
 * xtable
 * ggplot2
-* ddply
+* lattice
 
 Analysis
 --------------------------------------------------------
@@ -173,4 +173,7 @@ dailySummary <- ddply( imputedActivity, .(intervalMinutes, weekpart)
 
 library(ggplot2)
 qplot( intervalMinutes, mean, data = dailySummary, facets = weekpart ~. )
+library(lattice)
+xyplot( mean ~ intervalMinutes | weekpart, data = dailySummary, type = "l"
+        , layout = c(1,2) )
 ```

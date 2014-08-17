@@ -6,7 +6,7 @@ Packages and sources required
 * accompanying "lib.R"
 * xtable
 * ggplot2
-* ddply
+* lattice
 
 Analysis
 --------------------------------------------------------
@@ -71,7 +71,7 @@ print( xt, include.rownames = FALSE, type="html" )
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 16:22:05 2014 -->
+<!-- Sun Aug 17 16:28:30 2014 -->
 <TABLE border=1>
 <TR> <TH> Mean </TH> <TH> Median </TH>  </TR>
   <TR> <TD align="right"> 10766.19 </TD> <TD align="right"> 10765 </TD> </TR>
@@ -169,7 +169,7 @@ print( xt, include.rownames = FALSE, type="html" )
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 16:22:06 2014 -->
+<!-- Sun Aug 17 16:28:31 2014 -->
 <TABLE border=1>
 <TR> <TH> Mean </TH> <TH> Median </TH>  </TR>
   <TR> <TD align="right"> 10766.19 </TD> <TD align="right"> 10766.19 </TD> </TR>
@@ -212,4 +212,12 @@ library(ggplot2)
 qplot( intervalMinutes, mean, data = dailySummary, facets = weekpart ~. )
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-141.png) 
+
+```r
+library(lattice)
+xyplot( mean ~ intervalMinutes | weekpart, data = dailySummary, type = "l"
+        , layout = c(1,2) )
+```
+
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-142.png) 
