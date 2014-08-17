@@ -13,7 +13,8 @@ Analysis
 
 ### Data
 
-```{r}
+
+```r
 source("lib.R")
 ## download and unzip
 url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
@@ -26,42 +27,60 @@ dataFilename <- paste0( dataDir, "/activity.csv" )
 activity <- read.csv( dataFilename )
 ```
 
-This report is based on the raw data downloaded from `r url` at time `r downloadTime`.
+This report is based on the raw data downloaded from https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip at time 2014-08-17.12:14
+.
 
 ### Data summary
 
 Ignoring missing values,
-```{r}
+
+```r
 activity$date <- as.factor( activity$date )
 validSteps <- activity[ !is.na(activity$steps), ]
 ```
 find the total steps per day.
-```{r}
+
+```r
 stepsPerDay <- tapply( validSteps$steps, validSteps$date, sum )
 ```
 
 The following is the bar plot of the total steps per day and the histogram of the data:
-```{r, fig.height=6}
+
+```r
 barplot( stepsPerDay, main = "Total steps per day"
        , xlab = "Date", ylab = "Number of steps" )
 ```
 
-```{r, fig.height=6}
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+
+
+```r
 hist( stepsPerDay, breaks = 10, labels = TRUE
     , main = "Steps per day histogram" )
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
 The following is a summary of the steps per day data:
-```{r, results="asis"}
+
+```r
 library(xtable)
 xt <- xtable( data.frame( Mean = mean( stepsPerDay, na.rm = TRUE )
                           , Median = median( stepsPerDay, na.rm = TRUE ) ) )
 print( xt, include.rownames = FALSE, type="html" )
 ```
 
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Sun Aug 17 16:04:08 2014 -->
+<TABLE border=1>
+<TR> <TH> Mean </TH> <TH> Median </TH>  </TR>
+  <TR> <TD align="right"> 10766.19 </TD> <TD align="right"> 10765 </TD> </TR>
+   </TABLE>
+
 ### Average daily summary
 
-```{r, fig.height=6}
+
+```r
 ## convert interval to absolute minute of the day instead of military time
 hours <- floor( activity$interval/100 )
 activity$intervalMinutes <- hours*60 + ( activity$interval - hours*100 )
@@ -74,7 +93,10 @@ plot( names(dailySummary), dailySummary, type = "l"
     , ylab = "Number of steps")
 ```
 
-```{r}
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+
+
+```r
 summaryMaxSteps <- dailySummary[ dailySummary == max(dailySummary) ]
 summaryMaxMinute <- as.numeric( names(summaryMaxSteps) )
 summaryMaxHour <- floor( summaryMaxMinute/60 )
@@ -82,34 +104,37 @@ summaryMaxMinuteOfHour <- summaryMaxMinute - summaryMaxHour*60
 c(summaryMaxSteps, summaryMaxMinute, summaryMaxHour, summaryMaxMinuteOfHour)
 ```
 
-The 5-minute interval starting at the `r summaryMaxMinute` minute of the day
-(interval at hour `r summaryMaxHour`minute `r summaryMaxMinuteOfHour` of the day) 
+```
+##   515                   
+## 206.2 515.0   8.0  35.0
+```
+
+The 5-minute interval starting at the 515 minute of the day
+(interval at hour 8minute 35 of the day) 
 contains the **maximum** number 
-of steps (`r summaryMaxSteps`) in the summary.
+of steps (206.1698) in the summary.
 
 ### Imputing missing values
 
-```{r}
+
+```r
 numMissing <- sum( is.na(activity$steps) )
 numMissing
 ```
 
-```{r, echo=FALSE,results="hide"}
-## check that every day has a given (5minute) interval of the day
-activity$dummyCol <- 1
-tapply(activity$dummyCol,activity$intervalMinutes, sum)
-sum(tapply(activity$dummyCol,activity$intervalMinutes, sum) != 61)
-## check that all days in Oct and Nov are represented
-sum(grepl( "2012-10-", unique(activity$date) ))
-sum(grepl( "2012-11-", unique(activity$date) ))
+```
+## [1] 2304
 ```
 
-There are `r numMissing` missing values in the dataset.
+
+
+There are 2304 missing values in the dataset.
 
 Choose to simply fill in the missing values using the mean for that 5-minute interval
 of the day as found in the section "Average daily summary".
 
-```{r}
+
+```r
 imputedSteps <- apply( activity, 1, function(x) {
   stepsResolved <- x["steps"]
   if( is.na(stepsResolved) ) {
@@ -127,17 +152,28 @@ imputedActivity <- data.frame( steps = as.numeric( imputedSteps )
 Using the new data created by imputing the missing values, the new histogram
 and data summary for total steps per day is:
 
-```{r, fig.height=6}
+
+```r
 imputedStepsPerDay <- tapply( imputedActivity$steps, imputedActivity$date, sum )
 hist( imputedStepsPerDay, breaks = 10, labels = TRUE
     , main = "Histogram (w imputed data)", xlab = "Steps per day" )
 ```
 
-```{r, results="asis"}
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+
+
+```r
 xt <- xtable( data.frame( Mean = mean( imputedStepsPerDay )
                           , Median = median( imputedStepsPerDay ) ) )
 print( xt, include.rownames = FALSE, type="html" )
 ```
+
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Sun Aug 17 16:04:09 2014 -->
+<TABLE border=1>
+<TR> <TH> Mean </TH> <TH> Median </TH>  </TR>
+  <TR> <TD align="right"> 10766.19 </TD> <TD align="right"> 10766.19 </TD> </TR>
+   </TABLE>
 
 The mean was not affected by the inclusing of the imputed data. However, the median
 **was** altered by the change. 
@@ -153,7 +189,8 @@ imputed values in the first place.
 
 Using the part of the week (weekday vs weekend), again calculate each
 interval daily summary for each week part.
-```{r}
+
+```r
 weekpart <- apply( imputedActivity, 1, function(x) {
   weekday <- weekdays( as.POSIXct( x["date"] ) )
   part <- "weekday"
@@ -172,5 +209,13 @@ dailySummary <- ddply( imputedActivity, .(intervalMinutes, weekpart)
                        , summarize, mean = mean(steps) )
 
 library(ggplot2)
-qplot( intervalMinutes, mean, data = dailySummary, facets = weekpart ~. )
+qplot( intervalMinutes, mean, data = dailySummary, facets = weekpart ~.
+     , geom = "line" )
 ```
+
+```
+## geom_path: Each group consist of only one observation. Do you need to adjust the group aesthetic?
+## geom_path: Each group consist of only one observation. Do you need to adjust the group aesthetic?
+```
+
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
